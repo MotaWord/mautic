@@ -37,7 +37,7 @@ while ($mysql->connect_error);
 $initSql = null;
 
 if(!$mysql->select_db($mysql->real_escape_string($argv[4]))){
-    $initSql = fopen('init.sql', 'r');
+    $initSql = file_get_contents("/init.sql");
 }
 
 if (!$mysql->query('CREATE DATABASE IF NOT EXISTS `' . $mysql->real_escape_string($argv[4]) . '`'))
@@ -50,9 +50,10 @@ if (!$mysql->query('CREATE DATABASE IF NOT EXISTS `' . $mysql->real_escape_strin
 fwrite($stderr, "\nMySQL Database Created\n");
 
 if($initSql != null){
-    if (!$mysql->query("use `' . $mysql->real_escape_string($argv[4]) . '`';"  .$initSql))
+    $dbName = $mysql->real_escape_string($argv[4]);
+    if (!$mysql->multi_query('use `'.$dbName.'`;'.$initSql))
     {
-        fwrite($stderr, "\nMySQL 'CREATE UPDATE' Error: " . $mysql->error . "\n");
+        fwrite($stderr, "\nMySQL : ".'use `'.$dbName.'`;'.$initSql."' \n CREATE UPDATE' Error: " . $mysql->error . "\n");
         $mysql->close();
         exit(1);
     }
