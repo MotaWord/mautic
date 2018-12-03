@@ -66,6 +66,7 @@
 !/plugins/MauticOutlookBundle
 !/plugins/MauticSocialBundle
 !/plugins/MauticZapierBundle
+!/plugins/MotaWordBundle
 !/plugins/index.html
 
 /themes/*
