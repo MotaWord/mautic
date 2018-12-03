@@ -10,7 +10,7 @@ if (file_exists(__DIR__.'/security_local.php')) {
 
 //Twig Configuration
 $container->loadFromExtension('twig', [
-    'cache'            => false,
+    'cache'            => '%mautic.tmp_path%/%kernel.environment%/twig',
     'debug'            => '%kernel.debug%',
     'strict_variables' => '%kernel.debug%',
 ]);

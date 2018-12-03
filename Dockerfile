@@ -1,7 +1,7 @@
 FROM php:7.1-apache
 
 LABEL vendor="Mautic"
-LABEL maintainer="Motaword <it@motaword.com>"
+LABEL maintainer="MotaWord <it@motaword.com>"
 
 # Install PHP extensions
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -20,15 +20,14 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm /etc/cron.daily/*
 
-RUN docker-php-ext-configure imap --with-imap --with-imap-ssl --with-kerberos \
-    && docker-php-ext-install imap intl mbstring mcrypt mysqli pdo_mysql zip \
-    && docker-php-ext-enable imap intl mbstring mcrypt mysqli pdo_mysql zip
+RUN apt-get install $PHPIZE_DEPS
+RUN docker-php-ext-configure imap --with-imap --with-imap-ssl --with-kerberos
+RUN pecl install xdebug
+RUN docker-php-ext-install imap intl mbstring mcrypt mysqli pdo_mysql zip opcache
+RUN docker-php-ext-enable imap intl mbstring mcrypt mysqli pdo_mysql zip opcache xdebug
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
-
-# Define Mautic volume to persist data
-VOLUME /var/www/html
 
 # By default enable cron jobs
 ENV MAUTIC_RUN_CRON_JOBS true
@@ -38,6 +37,7 @@ ENV MAUTIC_DB_HOST database
 ENV MAUTIC_DB_USER mautic
 ENV MAUTIC_DB_NAME mautic
 
+RUN mkdir /var/log/mautic && chmod 777 /var/log/mautic
 
 # Copy init scripts and custom .htaccess
 COPY docker/docker-entrypoint.sh /entrypoint.sh
