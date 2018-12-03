@@ -89,8 +89,6 @@ fi
 # Ensure the MySQL Database is created
 php /makedb.php "$MAUTIC_DB_HOST" "$MAUTIC_DB_USER" "$MAUTIC_DB_PASSWORD" "$MAUTIC_DB_NAME"
 
-php app/console doctrine:schema:update --force
-
 echo >&2 "========================================================================"
 echo >&2
 echo >&2 "This server is now configured to run Mautic!"

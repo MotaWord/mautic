@@ -44,6 +44,7 @@ COPY docker/docker-entrypoint.sh /entrypoint.sh
 COPY docker/makedb.php /makedb.php
 COPY docker/mautic.crontab /etc/cron.d/mautic
 COPY docker/mautic-php.ini /usr/local/etc/php/conf.d/mautic-php.ini
+COPY docker/init.sql /init.sql
 
 # Enable Apache Rewrite Module
 RUN a2enmod rewrite

@@ -34,6 +34,12 @@ do
 }
 while ($mysql->connect_error);
 
+$initSql = null;
+
+if(!$mysql->select_db($mysql->real_escape_string($argv[4]))){
+    $initSql = fopen('init.sql', 'r');
+}
+
 if (!$mysql->query('CREATE DATABASE IF NOT EXISTS `' . $mysql->real_escape_string($argv[4]) . '`'))
 {
 	fwrite($stderr, "\nMySQL 'CREATE DATABASE' Error: " . $mysql->error . "\n");
@@ -42,5 +48,16 @@ if (!$mysql->query('CREATE DATABASE IF NOT EXISTS `' . $mysql->real_escape_strin
 }
 
 fwrite($stderr, "\nMySQL Database Created\n");
+
+if($initSql != null){
+    if (!$mysql->query("use `' . $mysql->real_escape_string($argv[4]) . '`';"  .$initSql))
+    {
+        fwrite($stderr, "\nMySQL 'CREATE UPDATE' Error: " . $mysql->error . "\n");
+        $mysql->close();
+        exit(1);
+    }
+}
+
+fwrite($stderr, "\nInitialized database with current config\n");
 
 $mysql->close();
