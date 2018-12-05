@@ -24,6 +24,17 @@ $container->loadFromExtension(
                 'heartbeat'          => 2,
                 'read_write_timeout' => 4,
             ],
+            'microservice' => [
+                'host' => '%mautic.rabbitmq_host%',
+                'port' => '%mautic.rabbitmq_port%',
+                'user' => '%mautic.rabbitmq_user%',
+                'password' => '%mautic.rabbitmq_password%',
+                'vhost' => '%mautic.rabbitmq_vhost%',
+                'lazy' => true,
+                'connection_timeout' => 3,
+                'heartbeat' => 2,
+                'read_write_timeout' => 4,
+            ],
         ],
         'producers' => [
             'mautic' => [
@@ -55,6 +66,21 @@ $container->loadFromExtension(
                     'durable'     => true,
                 ],
                 'callback' => 'mautic.queue.helper.rabbitmq_consumer',
+            ],
+            'microservice' => [
+                'exchange_options' => [
+                    'type' => 'topic',
+                    'name' => 'default-exchange',
+                ],
+                'callback' => 'mautic.microservice.helper.rabbitmq_consumer',
+                'connection' => 'microservice',
+                'queue_options' => [
+                    'name' => 'mautic-microservice',
+                    'routing_keys' => [
+                        'emails.#'
+                    ]
+                ],
+                'enable_logger' => true,
             ],
         ],
     ]

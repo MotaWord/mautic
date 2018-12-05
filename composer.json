@@ -15,7 +15,7 @@
         ]
     },
     "require": {
-        "php": ">=5.6.19 <7.2",
+        "php": ">=7.1 <7.2",
 
         "symfony/console": "~2.8",
         "symfony/debug": "~2.8",
@@ -107,7 +107,7 @@
         "symfony/expression-language": "~2.8",
         "egeloen/ordered-form-bundle": "^3.0",
         "symfony/dotenv": "^3.3",
-        "php-amqplib/rabbitmq-bundle": "^1.10",
+        "php-amqplib/rabbitmq-bundle": "^1.14",
         "leezy/pheanstalk-bundle": "^3.2",
         "simshaun/recurr": "^3.0",
         "ramsey/uuid": "^3.7",
