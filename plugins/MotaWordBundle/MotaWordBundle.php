@@ -3,6 +3,9 @@
 namespace MauticPlugin\MotaWordBundle;
 
 use Mautic\CoreBundle\Factory\MauticFactory;
+use Mautic\LeadBundle\Entity\LeadField;
+use Mautic\LeadBundle\Entity\LeadFieldRepository;
+use Mautic\LeadBundle\Model\FieldModel;
 use Mautic\PluginBundle\Bundle\PluginBundleBase;
 use Mautic\PluginBundle\Entity\Plugin;
 
@@ -18,8 +21,59 @@ class MotaWordBundle extends PluginBundleBase
      */
     public static function onPluginInstall(Plugin $plugin, MauticFactory $factory, $metadata = null, $installedSchema = null)
     {
-        // @todo add custom field to Contacts for MW ID (contacts are "Leads" in the codebase)
+        try {
+            /** @var FieldModel $model */
+            $model = $factory->getModel('lead.field');
 
-        parent::onPluginInstall($plugin, $factory, $metadata, $installedSchema);
+            $field = self::createMWIDField(self::getNextOrder($model));
+
+            $model->saveEntity($field);
+
+            parent::onPluginInstall($plugin, $factory, $metadata, $installedSchema);
+        } catch (\Exception $e) {
+            error_log($e);
+        }
+    }
+
+    /**
+     * @param FieldModel $model
+     *
+     * @return int
+     */
+    public static function getNextOrder($model)
+    {
+        /** @var LeadFieldRepository $repository */
+        $repository = $model->getRepository();
+
+        /** @var LeadField $lastLead */
+        $lastLead = $repository->findOneBy([], ['field_order' => 'desc']);
+
+        return $lastLead->getOrder() + 1;
+    }
+
+    /**
+     * @param $order
+     *
+     * @return LeadField
+     */
+    public static function createMWIDField($order)
+    {
+        $field = new LeadField();
+        $field->isPublished(true);
+        $field->setLabel('Motaword ID');
+        $field->setAlias('mw_id');
+        $field->setType('number');
+        $field->setGroup('core');
+        $field->setIsRequired(true);
+        $field->setIsFixed(true);
+        $field->setIsVisible(true);
+        $field->setIsShortVisible(true);
+        $field->setIsListable(true);
+        $field->setIsPubliclyUpdatable(false);
+        $field->setIsUniqueIdentifer(true);
+        $field->setObject('lead');
+        $field->setOrder($order);
+
+        return $field;
     }
 }
