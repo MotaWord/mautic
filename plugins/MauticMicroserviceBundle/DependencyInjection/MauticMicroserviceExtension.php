@@ -45,8 +45,6 @@ class MauticMicroserviceExtension extends Extension
         }
 
         if (file_exists(__DIR__.'/../Config/'.$queueProtocol.'.php')) {
-            $path = __DIR__.'/../Config/'.$queueProtocol.'.php';
-            echo PHP_EOL.$path.PHP_EOL;
             include __DIR__.'/../Config/'.$queueProtocol.'.php';
         }
     }

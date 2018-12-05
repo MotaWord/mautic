@@ -46,7 +46,7 @@ class MotaWordBundle extends PluginBundleBase
         $repository = $model->getRepository();
 
         /** @var LeadField $lastLead */
-        $lastLead = $repository->findOneBy([], ['field_order' => 'desc']);
+        $lastLead = $repository->findOneBy([], ['order' => 'desc']);
 
         return $lastLead->getOrder() + 1;
     }
