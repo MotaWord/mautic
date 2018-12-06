@@ -109,7 +109,7 @@ class EmailSubscriber extends CommonSubscriber
             $lead = $leadRepository->findOneBy(['mw_id' => $mwUserId]);
 
             if ($lead === null) {
-                $leadModel->saveEntity(getUser($mwUserId));
+                $leadModel->saveEntity($motaword->getUser($mwUserId));
 
                 /** @var Lead $createdLead */
                 $createdLead = $leadRepository->findOneBy(['mw_id' => $mwUserId]);
