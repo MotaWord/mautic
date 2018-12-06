@@ -12,11 +12,11 @@
 
 namespace MauticPlugin\MauticMicroserviceBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Mautic\PluginBundle\Bundle\PluginBundleBase;
 
 /**
  * Class MauticMicroserviceBundle.
  */
-class MauticMicroserviceBundle extends Bundle
+class MauticMicroserviceBundle extends PluginBundleBase
 {
 }
