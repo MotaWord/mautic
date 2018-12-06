@@ -24,7 +24,8 @@ RUN apt-get install $PHPIZE_DEPS
 RUN docker-php-ext-configure imap --with-imap --with-imap-ssl --with-kerberos
 RUN pecl install xdebug
 RUN docker-php-ext-install imap intl mbstring mcrypt mysqli pdo_mysql zip opcache
-RUN docker-php-ext-enable imap intl mbstring mcrypt mysqli pdo_mysql zip opcache xdebug
+RUN docker-php-ext-enable imap intl mbstring mcrypt mysqli pdo_mysql zip opcache
+
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
@@ -45,6 +46,7 @@ COPY docker/makedb.php /makedb.php
 COPY docker/mautic.crontab /etc/cron.d/mautic
 COPY docker/mautic-php.ini /usr/local/etc/php/conf.d/mautic-php.ini
 COPY docker/init.sql /init.sql
+#ADD . /var/www/html
 
 # Enable Apache Rewrite Module
 RUN a2enmod rewrite
