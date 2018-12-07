@@ -38,9 +38,6 @@ ENV MAUTIC_DB_HOST database
 ENV MAUTIC_DB_USER mautic
 ENV MAUTIC_DB_NAME mautic
 
-RUN mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
-    chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp
-
 # Copy init scripts and custom .htaccess
 COPY docker/docker-entrypoint.sh /entrypoint.sh
 COPY docker/makedb.php /makedb.php
@@ -49,6 +46,10 @@ COPY docker/mautic-php.ini /usr/local/etc/php/conf.d/mautic-php.ini
 COPY docker/init.sql /init.sql
 ADD . /var/www/html
 RUN cd /var/www/html && composer install
+
+RUN mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
+    chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp && \
+    chown -R www-data:www-data /var/www/html/app/cache && chown -R www-data:www-data /var/www/html/app/logs
 
 # Enable Apache Rewrite Module
 RUN a2enmod rewrite
