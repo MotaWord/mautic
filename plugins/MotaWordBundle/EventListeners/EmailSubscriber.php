@@ -22,7 +22,7 @@ use Mautic\LeadBundle\Model\LeadModel;
 use MauticPlugin\MauticMicroserviceBundle\Event\QueueConsumerEvent;
 use MauticPlugin\MauticMicroserviceBundle\Queue\QueueConsumerResults;
 use MauticPlugin\MauticMicroserviceBundle\QueueEvents;
-use MauticPlugin\MotaWordBundle\Integration\MotawordApi;
+use MauticPlugin\MotaWordBundle\Api\MotawordApi;
 use Psr\Log\LoggerInterface;
 
 /**

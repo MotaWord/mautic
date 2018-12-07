@@ -1,6 +1,6 @@
 <?php
 
-namespace MauticPlugin\MotaWordBundle\Integration;
+namespace MauticPlugin\MotaWordBundle\Api;
 
 use GuzzleHttp\Client;
 use Mautic\LeadBundle\Entity\Lead;
