@@ -26,7 +26,6 @@ RUN pecl install xdebug
 RUN docker-php-ext-install imap intl bcmath mbstring mcrypt mysqli pdo_mysql sockets zip opcache
 RUN docker-php-ext-enable imap intl bcmath mbstring mcrypt mysqli pdo_mysql sockets zip opcache
 
-
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
 

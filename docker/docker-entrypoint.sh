@@ -97,6 +97,8 @@ echo >&2 "This server is now configured to run Mautic!"
 chown www-data:www-data app/config/local.php
 mkdir -p /var/www/html/app/logs
 chown www-data:www-data /var/www/html/app/logs
+# Clear the cache
+composer run post-install-cmd
 
 
 if [[ "$MAUTIC_RUN_CRON_JOBS" == "true" ]]; then
