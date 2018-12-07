@@ -32,11 +32,11 @@ $parameters = [
         '3' => '172.18.0.1',
     ],
     'webroot'       => null,
-    'cache_path'    => '/tmp/app/cache',
+    //'cache_path'    => '/tmp/app/cache',
     // Problematic when run outside the docker container.
     //    'log_path'      => '/var/log/mautic',
     'image_path'    => 'media/images',
-    'tmp_path'      => '/tmp/app/cache',
+    //'tmp_path'      => '/tmp/app/cache',
     'theme'         => 'Mauve',
     'locale'        => 'en_US',
     'trusted_hosts' => [
