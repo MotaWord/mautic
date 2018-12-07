@@ -39,7 +39,7 @@ ENV MAUTIC_DB_USER mautic
 ENV MAUTIC_DB_NAME mautic
 
 RUN mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
-    chmod 777 -R /tmp && chmod o+t -R /tmp
+    chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp
 
 # Copy init scripts and custom .htaccess
 COPY docker/docker-entrypoint.sh /entrypoint.sh
