@@ -134,7 +134,7 @@ mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/m
     chown -R www-data:www-data /var/www/html/media
 
 # Clear the cache
-composer run post-install-cmd
+composer run post-install-cmd && chown -R www-data:www-data /var/www/html/app/cache
 
 # wait until all processes end (wait returns 0 retcode)
 while :; do
