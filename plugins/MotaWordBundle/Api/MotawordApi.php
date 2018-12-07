@@ -9,7 +9,7 @@ class MotawordApi
 {
     //TODO : following parameters should be env. parameters.
 
-    private $baseURL  = 'api';
+    private $baseURL  = 'http://api';
     private $username = '518725b5fcda3573';
     private $password = '27e571d75a56b8053ffc69caf58213ba';
 
@@ -21,13 +21,13 @@ class MotawordApi
         $credentials = base64_encode($this->username.':'.$this->password);
 
         $response = $client->post('token', [
-            'headers'   => ['Authorization' => 'Basic '.$credentials],
-            'multipart' => [
+            'headers'     => ['Authorization' => 'Basic '.$credentials],
+            'form_params' => [
                 'grant_type' => 'client_credentials',
             ],
         ]);
 
-        $body = json_decode($response->getBody());
+        $body = json_decode($response->getBody(), true);
 
         return $body['access_token'];
     }
@@ -46,9 +46,9 @@ class MotawordApi
             'base_uri' => $this->baseURL,
         ]);
 
-        $response = $client->get('users/'.$mw_id.'/?access_token'.$token);
+        $response = $client->get('users/'.$mw_id.'?access_token='.$token);
 
-        $body = json_decode($response->getBody());
+        $body = json_decode($response->getBody(), true);
 
         return $this->buildLead($body['email_address'], $mw_id);
     }
