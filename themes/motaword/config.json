@@ -1,0 +1,14 @@
+{
+    "name": "MotaWord",
+    "features": [
+        "email",
+    ],
+    "slots": {
+        "email": [
+            "header",
+            "body",
+            "primary-cta",
+            "footer"
+        ]
+    }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <title> {{ slot('subject') }}</title>
+
+</head>
+
+<body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" bgcolor="#ffffff" style="line-height: 20px">
+
+<table align="center" style="width: 600px; text-align: center; color: rgb(26, 26, 26); font-family: Lucida Grande,sans-serif; border-collapse: collapse;" border="0" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+    <td>
+        <table align="left" style="width: 100%; text-align: left;" border="0" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <td valign="bottom" style="min-width: 300px;width: 80%;vertical-align:bottom;"><a
+                            style="width: 100%; text-decoration: none; min-height: 100%;"
+                            href="https://www.motaword.com" target="_blank"><img width="290" height="40"
+                                                                                 src="https://www.motaword.com/new/images/new_logo_horizontal.png"
+                                                                                 border="0"></a></td>
+                <td valign="bottom" style="vertical-align:bottom; width: 20%; text-align: right;">
+                    <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
+                        <tbody>
+                        <tr>
+                            <td style="padding: 0px;"><a
+                                        style="width: 100%; text-decoration: none; min-height: 100%; height: 20px; display: block;"
+                                        href="https://www.facebook.com/motaword" target="_blank"><img width="20"
+                                                                                                      height="20"
+                                                                                                      src="https://www.motaword.com/images/email/facebook_B.png"
+                                                                                                      border="0"></a>
+                            </td>
+                            <td style="width: 10%; min-width: 20px; padding-right: 15px; padding-left: 15px;"><a
+                                        style="width: 100%; text-decoration: none; min-height: 100%; height: 20px; display: block;"
+                                        href="https://twitter.com/motaword" target="_blank"><img width="20" height="20"
+                                                                                                 src="https://www.motaword.com/images/email/twitter_b.png"
+                                                                                                 border="0"></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td width="600" height="31" valign="bottom" style="width:600px; height:31px; vertical-align:bottom;">
+        <hr/>
+    </td>
+</tr>
+<tr>
+    <td align="center">
+
+
+        <table style="width: 348px; text-align: center;" width="348" border="0" cellspacing="0" cellpadding="0">
+            <tbody>
+            <tr>
+                <td width="348" height="87" valign="bottom" style="width:348px; height:87px; vertical-align:bottom">
+                    {{ slot('header') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="348" height="108" valign="bottom" style="line-height: 20px;width:348px;height:108px;">
+                    {{ slot('body') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="348" height="68" valign="bottom" style="width:348px;height:68px;vertical-align:bottom;">
+                    {{ slot('primary-cta') }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </td>
+</tr>
+<tr>
+    <td width="600" height="42px" valign="bottom" style="width:600px; height:42px; vertical-align:bottom">
+        <hr/>
+    </td>
+</tr>
+<tr>
+    <td align="center" style="text-align: center;"><span style="color: rgb(128, 128, 128); font-size: 9px;">©&nbsp;2019 MotaWord. All Rights Reserved. See our privacy policy or our terms of use.</span>
+    </td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>
