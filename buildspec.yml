@@ -1,0 +1,34 @@
+###
+### This is a template for a typical MotaWord PHP HTTP application.
+### Typically, you should only change the environment variables for applications
+### that use the internal-api repository.
+###
+version: 0.2
+
+env:
+  variables:
+    # Should be overriden by builder
+    REPOSITORY_URI: 119215188664.dkr.ecr.us-west-2.amazonaws.com/mautic
+    DEFAULT_IMAGE_TAG: staging
+    ECS_CLUSTER_NAME: staging-cluster
+    ECS_SERVICE_NAME: mautic
+
+phases:
+  pre_build:
+    commands:
+      # Prepare Docker
+    - echo Logging in to Amazon ECR...
+    - aws --version && docker version
+    - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+    - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+    - docker pull ${REPOSITORY_URI}:${DEFAULT_IMAGE_TAG:=latest} || true
+  build:
+    commands:
+      - echo Docker buld started on `date`
+      - docker build -t ${REPOSITORY_URI}:${DEFAULT_IMAGE_TAG:=latest} .
+  post_build:
+    commands:
+    - echo Builds completed on `date`
+    - echo Pushing the Docker images...
+    - docker push $REPOSITORY_URI:${DEFAULT_IMAGE_TAG:=latest}
+    - aws ecs update-service --cluster ${ECS_CLUSTER_NAME} --service ${ECS_SERVICE_NAME} --force-new-deployment
