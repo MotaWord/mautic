@@ -22,7 +22,7 @@ use Mautic\LeadBundle\Model\LeadModel;
 use MauticPlugin\MauticMicroserviceBundle\Event\QueueConsumerEvent;
 use MauticPlugin\MauticMicroserviceBundle\Queue\QueueConsumerResults;
 use MauticPlugin\MauticMicroserviceBundle\QueueEvents;
-use MauticPlugin\MotaWordBundle\Integration\MotawordIntegration;
+use MauticPlugin\MotaWordBundle\Integration\MotawordApi;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -102,7 +102,7 @@ class EmailSubscriber extends CommonSubscriber
 
         /** @var LeadRepository $repository */
         $leadRepository = $leadModel->getRepository();
-        $motaword       = new MotawordIntegration();
+        $motaword       = new MotawordApi();
 
         foreach ($mwUserIds as $mwUserId) {
             /** @var Lead $lead */

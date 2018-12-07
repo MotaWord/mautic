@@ -5,7 +5,7 @@ namespace MauticPlugin\MotaWordBundle\Integration;
 use GuzzleHttp\Client;
 use Mautic\LeadBundle\Entity\Lead;
 
-class MotawordIntegration
+class MotawordApi
 {
     //TODO : following parameters should be env. parameters.
 
