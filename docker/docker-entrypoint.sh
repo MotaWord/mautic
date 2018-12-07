@@ -97,8 +97,6 @@ echo >&2 "This server is now configured to run Mautic!"
 chown www-data:www-data app/config/local.php
 mkdir -p /var/www/html/app/logs
 chown www-data:www-data /var/www/html/app/logs
-# Clear the cache
-composer run post-install-cmd
 
 
 if [[ "$MAUTIC_RUN_CRON_JOBS" == "true" ]]; then
@@ -129,6 +127,14 @@ shut_down() {
     kill -TERM $MAINPID || echo 'Main process not killed. Already gone.'
 }
 trap 'shut_down;' TERM INT
+
+mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
+    chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp && \
+    chown -R www-data:www-data /var/www/html/app/cache && chown -R www-data:www-data /var/www/html/app/logs && \
+    chown -R www-data:www-data /var/www/html/media
+
+# Clear the cache
+composer run post-install-cmd
 
 # wait until all processes end (wait returns 0 retcode)
 while :; do
