@@ -12,12 +12,12 @@
 namespace MauticPlugin\MauticMicroserviceBundle\Event;
 
 use Mautic\CoreBundle\Event\CommonEvent;
-use MauticPlugin\MauticMicroserviceBundle\Queue\QueueConsumerResults;
+use MauticPlugin\MauticMicroserviceBundle\Queue\MicroserviceConsumerResults;
 
 /**
- * Class QueueConsumerEvent.
+ * Class MicroserviceConsumerEvent.
  */
-class QueueConsumerEvent extends CommonEvent
+class MicroserviceConsumerEvent extends CommonEvent
 {
     /**
      * @var array
@@ -32,7 +32,7 @@ class QueueConsumerEvent extends CommonEvent
     public function __construct($payload = [])
     {
         $this->payload = $payload;
-        $this->result  = QueueConsumerResults::DO_NOT_ACKNOWLEDGE;
+        $this->result  = MicroserviceConsumerResults::DO_NOT_ACKNOWLEDGE;
     }
 
     /**

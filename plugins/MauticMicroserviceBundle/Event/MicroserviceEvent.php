@@ -14,9 +14,9 @@ namespace MauticPlugin\MauticMicroserviceBundle\Event;
 use Mautic\CoreBundle\Event\CommonEvent;
 
 /**
- * Class QueueEvent.
+ * Class MicroserviceEvent.
  */
-class QueueEvent extends CommonEvent
+class MicroserviceEvent extends CommonEvent
 {
     /**
      * @var int|null

@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * CLI Command to process orders that have been queued.
  * Class ProcessQueuesCommand.
  */
-class ConsumeQueueCommand extends ContainerAwareCommand
+class ConsumeMicroserviceCommand extends ContainerAwareCommand
 {
     /**
      * {@inheritdoc}
@@ -33,7 +33,7 @@ class ConsumeQueueCommand extends ContainerAwareCommand
                 '--queue-name',
                 '-i',
                 InputOption::VALUE_REQUIRED,
-                'Process queues orders for a specific queue.',
+                'Process microservice queue messages for a specific queue.',
                 null
             )
             ->addOption(

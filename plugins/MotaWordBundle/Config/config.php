@@ -1,12 +1,30 @@
 <?php
 
+// i think there must be a better configuration scheme.
+// we should be configuring MicroserviceBundle, not RabbitMQ bundle.
+$container->loadFromExtension(
+    'old_sound_rabbit_mq',
+    [
+        'consumers' => [
+            'microservice' => [
+                'queue_options' => [
+                    'name'         => 'mautic-microservice',
+                    'routing_keys' => [
+                        'emails.#',
+                    ],
+                ],
+            ],
+        ],
+    ]
+);
+
 return [
-    'name' => 'MotaWord Email Microservice Bundle',
-    'description' => 'This bundle integrates Mautic natively with MotaWord. ' .
-        'It adds functionality to make Mautic behave as a MotaWord ' .
+    'name'        => 'MotaWord Email Microservice Bundle',
+    'description' => 'This bundle integrates Mautic natively with MotaWord. '.
+        'It adds functionality to make Mautic behave as a MotaWord '.
         'microservice for all email communication and related needs.',
     'version' => '1.0',
-    'author' => 'MotaWord',
+    'author'  => 'MotaWord',
 
     ////////
 
@@ -21,9 +39,9 @@ return [
             // If header not present, then the ID here is really the lead ID.
             // Leads are contacts in Mautic's dashboard.
             'plugin_motaword_api_sendcontactemail_mwuser' => [
-                'path' => '/emails/{id}/contact/{mwUserId}/send',
-                'controller' => 'MotaWordBundle:Api\EmailApi:sendToUser',
-                'method' => 'POST',
+                'path'         => '/emails/{id}/contact/{mwUserId}/send',
+                'controller'   => 'MotaWordBundle:Api\EmailApi:sendToUser',
+                'method'       => 'POST',
                 'requirements' => [
                     'id' => '\d+', // Original Mautic endpoint should require \d+ only.
                 ],
@@ -36,9 +54,9 @@ return [
             // added by us, otherwise, we would need to preserve leadId support)
             // Example: /emails/hello_world/1/send
             'plugin_motaword_api_sendcontactemail_emailname' => [
-                'path' => '/emails/{name}/contact/{mwUserId}/send',
-                'controller' => 'MotaWordBundle:Api\EmailApi:sendToUser',
-                'method' => 'POST',
+                'path'         => '/emails/{name}/contact/{mwUserId}/send',
+                'controller'   => 'MotaWordBundle:Api\EmailApi:sendToUser',
+                'method'       => 'POST',
                 'requirements' => [
                     'name' => '[a-zA-Z0-9]+', // Original Mautic endpoint should require \d+ only.
                 ],
@@ -49,15 +67,17 @@ return [
             // We can also simply choose this method and drop usage of Mautic's send endpoints.
             // Example request can be like: {"template": "hello_world", "mw_user_id": 1, "data": {..custom variables..}}
             'plugin_motaword_api_send_email' => [
-                'path' => '/send',
+                'path'       => '/send',
                 'controller' => 'MotaWordBundle:Api\EmailApi:send',
-                'method' => 'POST',
+                'method'     => 'POST',
             ],
         ],
     ],
 
     'services' => [
         'events' => [
+            // the key of this array can be anything, it's just a container reference for EmailSubscriber.
+            // not topic or anything.
             'mautic.motaword.emails.subscriber' => [
                 'class'     => 'MauticPlugin\MotaWordBundle\EventListeners\EmailSubscriber',
                 'arguments' => [

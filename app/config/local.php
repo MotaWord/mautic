@@ -231,6 +231,7 @@ $parameters = [
     'rabbitmq_vhost'                        => '/',
     'rabbitmq_user'                         => getenv('RABBITMQ_USER'),
     'rabbitmq_password'                     => getenv('RABBITMQ_PASSWORD'),
+    'rabbitmq_exchange'                     => 'default-exchange',
     'beanstalkd_host'                       => 'localhost',
     'beanstalkd_port'                       => '11300',
     'beanstalkd_timeout'                    => '60',

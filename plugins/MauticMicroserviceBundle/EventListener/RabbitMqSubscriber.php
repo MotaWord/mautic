@@ -13,9 +13,8 @@ namespace MauticPlugin\MauticMicroserviceBundle\EventListener;
 
 use MauticPlugin\MauticMicroserviceBundle\Event as Events;
 use MauticPlugin\MauticMicroserviceBundle\Queue\QueueProtocol;
-use PhpAmqpLib\Message\AMQPMessage;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class RabbitMqSubscriber.
@@ -37,37 +36,21 @@ class RabbitMqSubscriber extends AbstractQueueSubscriber
      *
      * @param ContainerInterface $container
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger)
     {
         // The container is needed due to non-required binding of the producer & consumer
         $this->container = $container;
+        $this->logger    = $logger;
     }
 
     /**
-     * @param Events\QueueEvent $event
+     * @param Events\MicroserviceEvent $event
      */
-    public function publishMessage(Events\QueueEvent $event)
+    public function consumeMessage(Events\MicroserviceEvent $event)
     {
-        $producer = $this->container->get('old_sound_rabbit_mq.microservice_producer');
-        $producer->setQueue($event->getQueueName());
-        $producer->publish($event->getPayload(), $event->getQueueName(), [
-            'delivery_mode' => AMQPMessage::DELIVERY_MODE_PERSISTENT,
-        ]);
-    }
-
-    /**
-     * @param Events\QueueEvent $event
-     */
-    public function consumeMessage(Events\QueueEvent $event)
-    {
+        $this->logger->info('@consumeMessage');
         $consumer = $this->container->get('old_sound_rabbit_mq.microservice_consumer');
-        $consumer->setQueueOptions([
-            'name'        => $event->getQueueName(),
-            'auto_delete' => false,
-            'durable'     => true,
-        ]);
-        $consumer->setRoutingKey($event->getQueueName());
+        $this->logger->info('Listening for topic '.$event->getQueueName());
         $consumer->consume($event->getMessages());
     }
-
 }

@@ -17,6 +17,8 @@ class QueueRequestHelper
 {
     /**
      * @param Request $request
+     *
+     * @return array
      */
     public static function flattenRequest(Request $request)
     {
@@ -33,6 +35,8 @@ class QueueRequestHelper
 
     /**
      * @param array $request
+     *
+     * @return Request
      */
     public static function buildRequest(array $request)
     {

@@ -13,9 +13,9 @@
 namespace MauticPlugin\MauticMicroserviceBundle\Queue;
 
 /**
- * Class QueueConsumerResults.
+ * Class MicroserviceConsumerResults.
  */
-final class QueueConsumerResults
+final class MicroserviceConsumerResults
 {
     const ACKNOWLEDGE        = 'delete';
     const DO_NOT_ACKNOWLEDGE = 'do_not_acknowledge';

@@ -13,12 +13,15 @@ return [
     'services' => [
         'events' => [
             'mautic.microservice.rabbitmq.subscriber' => [
-                'public' => true,
+                'public'    => true,
                 'class'     => 'MauticPlugin\MauticMicroserviceBundle\EventListener\RabbitMqSubscriber',
-                'arguments' => 'service_container',
+                'arguments' => [
+                    'service_container',
+                    'monolog.logger.mautic',
+                ],
             ],
             'mautic.microservice.beanstalkd.subscriber' => [
-                'public' => true,
+                'public'    => true,
                 'class'     => 'MauticPlugin\MauticMicroserviceBundle\EventListener\BeanstalkdSubscriber',
                 'arguments' => [
                     'service_container',
@@ -26,7 +29,7 @@ return [
                 ],
             ],
             'mautic.microservice.emails.subscriber' => [
-                'class'     => 'MauticPlugin\MauticMicroserviceBundle\EventListener\EmailSubscriber',
+                'class'     => 'MauticPlugin\MauticMicroserviceBundle\EventListener\DefaultSubscriber',
                 'arguments' => [
                     'mautic.helper.ip_lookup',
                     'mautic.core.model.auditlog',
@@ -38,7 +41,7 @@ return [
         'other' => [
             'mautic.microservice.service' => [
                 'class'     => 'MauticPlugin\MauticMicroserviceBundle\Queue\QueueService',
-                'public' => true,
+                'public'    => true,
                 'arguments' => [
                     'mautic.helper.core_parameters',
                     'event_dispatcher',
@@ -46,7 +49,7 @@ return [
                 ],
             ],
             'mautic.microservice.helper.rabbitmq_consumer' => [
-                'public' => true,
+                'public'    => true,
                 'class'     => 'MauticPlugin\MauticMicroserviceBundle\Helper\RabbitMqConsumer',
                 'arguments' => 'mautic.microservice.service',
             ],

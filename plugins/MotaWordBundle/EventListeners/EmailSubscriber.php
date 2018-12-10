@@ -19,10 +19,10 @@ use Mautic\EmailBundle\Model\EmailModel;
 use Mautic\LeadBundle\Entity\Lead;
 use Mautic\LeadBundle\Entity\LeadRepository;
 use Mautic\LeadBundle\Model\LeadModel;
-use MauticPlugin\MauticMicroserviceBundle\Event\QueueConsumerEvent;
-use MauticPlugin\MauticMicroserviceBundle\Queue\QueueConsumerResults;
-use MauticPlugin\MauticMicroserviceBundle\QueueEvents;
-use MauticPlugin\MotaWordBundle\Api\MotawordApi;
+use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceConsumerEvent;
+use MauticPlugin\MauticMicroserviceBundle\Queue\MicroserviceConsumerResults;
+use MauticPlugin\MotaWordBundle\Api\MotaWordApi;
+use MauticPlugin\MotaWordBundle\MicroserviceEvents;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -53,9 +53,11 @@ class EmailSubscriber extends CommonSubscriber
     /**
      * EmailSubscriber constructor.
      *
-     * @param IpLookupHelper $ipLookupHelper
-     * @param AuditLogModel  $auditLogModel
-     * @param EmailModel     $emailModel
+     * @param MauticFactory   $factory
+     * @param IpLookupHelper  $ipLookupHelper
+     * @param AuditLogModel   $auditLogModel
+     * @param EmailModel      $emailModel
+     * @param LoggerInterface $logger
      */
     public function __construct(MauticFactory $factory, IpLookupHelper $ipLookupHelper, AuditLogModel $auditLogModel, EmailModel $emailModel, LoggerInterface $logger)
     {
@@ -63,6 +65,7 @@ class EmailSubscriber extends CommonSubscriber
         $this->ipLookupHelper = $ipLookupHelper;
         $this->auditLogModel  = $auditLogModel;
         $this->emailModel     = $emailModel;
+        $this->logger         = $logger;
     }
 
     /**
@@ -71,15 +74,18 @@ class EmailSubscriber extends CommonSubscriber
     public static function getSubscribedEvents()
     {
         return [
-            QueueEvents::SEND_EMAIL => ['onSend', 0],
+            MicroserviceEvents::SEND_EMAIL => ['onSend', 0],
         ];
     }
 
-    public function onSend(QueueConsumerEvent $event): QueueConsumerEvent
+    public function onSend(MicroserviceConsumerEvent $event): MicroserviceConsumerEvent
     {
         $payload = $event->getPayload();
+        $this->logger->info('@onSend, payload: '.json_encode($payload));
         if (!isset($payload['name'])) {
-            $event->setResult(QueueConsumerResults::ACKNOWLEDGE);
+            $this->logger->warning('Payload missing email name. Skipping.');
+
+            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
 
             return $event;
         }
@@ -88,8 +94,10 @@ class EmailSubscriber extends CommonSubscriber
         $email = $this->emailModel->getEntity($payload['name']);
 
         //@todo also support regular email addresses apart from user_ids.
-        if (!isset($payload['user_id_list'])) {
-            $event->setResult(QueueConsumerResults::ACKNOWLEDGE);
+        if (!isset($payload['user_id_list']) || !$payload['user_id_list']) {
+            $this->logger->warning('Payload missing recipient list. Skipping.');
+
+            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
 
             return $event;
         }
@@ -102,13 +110,14 @@ class EmailSubscriber extends CommonSubscriber
 
         /** @var LeadRepository $repository */
         $leadRepository = $leadModel->getRepository();
-        $motaword       = new MotawordApi();
+        $motaword       = new MotaWordApi();
 
         foreach ($mwUserIds as $mwUserId) {
             /** @var Lead $lead */
             $lead = $leadRepository->findOneBy(['mw_id' => $mwUserId]);
 
             if ($lead === null) {
+                $this->logger->info('Could not find MW user as Mautic lead. Creating one.');
                 $leadModel->saveEntity($motaword->getUser($mwUserId));
 
                 /** @var Lead $createdLead */
@@ -120,13 +129,13 @@ class EmailSubscriber extends CommonSubscriber
             }
         }
 
-        if ($this->emailModel->sendEmail($email, $sendTo)) {
-            $event->setResult(QueueConsumerResults::ACKNOWLEDGE);
+        if ($sendTo && $this->emailModel->sendEmail($email, $sendTo)) {
+            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
 
             return $event;
         }
 
-        $event->setResult(QueueConsumerResults::REJECT);
+        $event->setResult(MicroserviceConsumerResults::REJECT);
 
         return $event;
     }

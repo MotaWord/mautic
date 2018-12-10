@@ -13,16 +13,14 @@ namespace MauticPlugin\MauticMicroserviceBundle\EventListener;
 
 use Mautic\CoreBundle\EventListener\CommonSubscriber;
 use MauticPlugin\MauticMicroserviceBundle\Event as Events;
-use MauticPlugin\MauticMicroserviceBundle\QueueEvents;
+use MauticPlugin\MauticMicroserviceBundle\MicroserviceEvents;
 
 abstract class AbstractQueueSubscriber extends CommonSubscriber
 {
     protected $protocol              = '';
     protected $protocolUiTranslation = '';
 
-    abstract public function publishMessage(Events\QueueEvent $event);
-
-    abstract public function consumeMessage(Events\QueueEvent $event);
+    abstract public function consumeMessage(Events\MicroserviceEvent $event);
 
     /**
      * @return array
@@ -30,28 +28,15 @@ abstract class AbstractQueueSubscriber extends CommonSubscriber
     public static function getSubscribedEvents()
     {
         return [
-            QueueEvents::PUBLISH_MESSAGE => ['onPublishMessage', 0],
-            QueueEvents::CONSUME_MESSAGE => ['onConsumeMessage', 0],
-            QueueEvents::BUILD_CONFIG    => ['onBuildConfig', 0],
+            MicroserviceEvents::CONSUME_MESSAGE => ['onConsumeMessage', 0],
+            MicroserviceEvents::BUILD_CONFIG    => ['onBuildConfig', 0],
         ];
     }
 
     /**
-     * @param Events\QueueEvent $event
+     * @param Events\MicroserviceEvent $event
      */
-    public function onPublishMessage(Events\QueueEvent $event)
-    {
-        if (!$event->checkContext($this->protocol)) {
-            return;
-        }
-
-        $this->publishMessage($event);
-    }
-
-    /**
-     * @param Events\QueueEvent $event
-     */
-    public function onConsumeMessage(Events\QueueEvent $event)
+    public function onConsumeMessage(Events\MicroserviceEvent $event)
     {
         if (!$event->checkContext($this->protocol)) {
             return;
@@ -59,5 +44,4 @@ abstract class AbstractQueueSubscriber extends CommonSubscriber
 
         $this->consumeMessage($event);
     }
-
 }

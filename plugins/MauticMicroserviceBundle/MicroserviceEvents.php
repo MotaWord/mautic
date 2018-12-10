@@ -13,10 +13,10 @@
 namespace MauticPlugin\MauticMicroserviceBundle;
 
 /**
- * Class QueueEvents
+ * Class MicroserviceEvents
  * Events available for MauticMicroserviceBundle.
  */
-final class QueueEvents
+final class MicroserviceEvents
 {
     const CONSUME_MESSAGE = 'mautic.microservice_consume_message';
 
@@ -24,6 +24,5 @@ final class QueueEvents
 
     const BUILD_CONFIG = 'mautic.microservice_build_config';
 
-    const ALL = 'mautic.microservice_emails';
-    const SEND_EMAIL = 'mautic.microservice_emails_send';
+    const ALL = 'mautic.microservice.*';
 }

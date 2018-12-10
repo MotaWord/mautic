@@ -1,5 +1,7 @@
 <?php
 
+/** @noinspection PhpUndefinedClassInspection */
+
 /*
  * @copyright   2018 Mautic Contributors. All rights reserved
  * @author      Mautic
@@ -14,14 +16,13 @@
 namespace MauticPlugin\MauticMicroserviceBundle\Queue;
 
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
-use MauticPlugin\MauticMicroserviceBundle\Event\QueueConsumerEvent;
-use MauticPlugin\MauticMicroserviceBundle\Event\QueueEvent;
+use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceConsumerEvent;
+use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceEvent;
 use MauticPlugin\MauticMicroserviceBundle\Helper\QueueRequestHelper;
-use MauticPlugin\MauticMicroserviceBundle\QueueEvents;
+use MauticPlugin\MauticMicroserviceBundle\MicroserviceEvents;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class QueueService.
@@ -48,6 +49,7 @@ class QueueService
      *
      * @param CoreParametersHelper     $coreParametersHelper
      * @param EventDispatcherInterface $eventDispatcher
+     * @param LoggerInterface          $logger
      */
     public function __construct(CoreParametersHelper $coreParametersHelper, EventDispatcherInterface $eventDispatcher, LoggerInterface $logger)
     {
@@ -57,45 +59,27 @@ class QueueService
     }
 
     /**
-     * @param string $queueName
-     * @param array  $payload
-     */
-    public function publishToQueue($queueName, array $payload = [])
-    {
-        if (isset($payload['request']) && $payload['request'] instanceof Request) {
-            $payload['request'] = QueueRequestHelper::flattenRequest($payload['request']);
-        }
-
-        $logPayload = $payload;
-        unset($logPayload['request']);
-        $this->logger->debug('MICROSERVICE: Queuing job for '.$queueName, $logPayload);
-
-        $protocol                   = $this->coreParametersHelper->getParameter('queue_protocol');
-        $event                      = new QueueEvent($protocol, $queueName, $payload);
-        $this->eventDispatcher->dispatch(QueueEvents::PUBLISH_MESSAGE, $event);
-    }
-
-    /**
      * @param string   $queueName
      * @param int|null $messages
      */
     public function consumeFromQueue($queueName, $messages = null)
     {
         $protocol = $this->coreParametersHelper->getParameter('queue_protocol');
-        $event    = new QueueEvent($protocol, $queueName, [], $messages);
-        $this->eventDispatcher->dispatch(QueueEvents::CONSUME_MESSAGE, $event);
+        $event    = new MicroserviceEvent($protocol, $queueName, [], $messages);
+        $this->eventDispatcher->dispatch(MicroserviceEvents::CONSUME_MESSAGE, $event);
     }
 
     /**
      * @param AMQPMessage $msg
-     * @return QueueConsumerEvent
+     *
+     * @return MicroserviceConsumerEvent
      */
     public function dispatchConsumerEventFromPayload(AMQPMessage $msg)
     {
         $routingKey = $msg->delivery_info['routing_key'];
-        $payload = $msg->body;
+        $payload    = $msg->body;
         $payload    = json_decode($payload, true);
-        if(!$payload) {
+        if (!$payload) {
             $payload = [];
         }
         $logPayload = $payload;
@@ -105,17 +89,30 @@ class QueueService
             $payload['request'] = QueueRequestHelper::buildRequest($payload['request']);
         }
 
-        // This is needed since OldSound RabbitMqBundle consumers don't know what their queue is
-        $eventName = str_replace('.', '_', $routingKey);
-        $eventName = "mautic.microservice_{$eventName}";
+        // This is the event name released to the system.
+        // microservice bundle users should their own events and bind them
+        // via config to microservice configuration.
+        // Microservice bundle will simply get your configuration,
+        // and release those events when you receive a message to the topic $routingKey
+        // We also have a way to listen to all microservice events, for instance for logging.
+        // see below, after the release of this $eventName.
+        // @warning Listeners should acknowledge the message.
+        $eventName = "mautic.microservice.{$routingKey}";
 
         $this->logger->debug('MICROSERVICE: Consuming job for routing key '.$routingKey.': '.$eventName, $logPayload);
 
-        $event = new QueueConsumerEvent($payload);
-        if($this->eventDispatcher->hasListeners($eventName)) {
+        $event = new MicroserviceConsumerEvent($payload);
+        if ($this->eventDispatcher->hasListeners($eventName)) {
             $this->eventDispatcher->dispatch($eventName, $event);
         } else {
-            $event->setResult(QueueConsumerResults::ACKNOWLEDGE);
+            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
+        }
+
+        // If there is a listener for mautic.microservice.*, trigger them
+        $allEventName = 'mautic.microservice.*';
+        $allEvent     = new MicroserviceConsumerEvent($payload);
+        if ($this->eventDispatcher->hasListeners($allEventName)) {
+            $this->eventDispatcher->dispatch($allEventName, $allEvent);
         }
 
         return $event;

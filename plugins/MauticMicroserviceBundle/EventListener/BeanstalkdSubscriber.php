@@ -12,13 +12,12 @@
 namespace MauticPlugin\MauticMicroserviceBundle\EventListener;
 
 use MauticPlugin\MauticMicroserviceBundle\Event as Events;
-use MauticPlugin\MauticMicroserviceBundle\Queue\QueueConsumerResults;
+use MauticPlugin\MauticMicroserviceBundle\Queue\MicroserviceConsumerResults;
 use MauticPlugin\MauticMicroserviceBundle\Queue\QueueProtocol;
 use MauticPlugin\MauticMicroserviceBundle\Queue\QueueService;
 use Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class BeanstalkdSubscriber.
@@ -56,21 +55,11 @@ class BeanstalkdSubscriber extends AbstractQueueSubscriber
     }
 
     /**
-     * @param Events\QueueEvent $event
-     */
-    public function publishMessage(Events\QueueEvent $event)
-    {
-        $this->container->get('leezy.pheanstalk')
-            ->useTube($event->getQueueName())
-            ->put($event->getPayload());
-    }
-
-    /**
-     * @param Events\QueueEvent $event
+     * @param Events\MicroserviceEvent $event
      *
      * @throws Pheanstalk\Exception\ServerException
      */
-    public function consumeMessage(Events\QueueEvent $event)
+    public function consumeMessage(Events\MicroserviceEvent $event)
     {
         $messagesConsumed = 0;
 
@@ -87,9 +76,9 @@ class BeanstalkdSubscriber extends AbstractQueueSubscriber
 
             $consumerEvent = $this->queueService->dispatchConsumerEventFromPayload($job->getData());
 
-            if ($consumerEvent->getResult() === QueueConsumerResults::TEMPORARY_REJECT) {
+            if ($consumerEvent->getResult() === MicroserviceConsumerResults::TEMPORARY_REJECT) {
                 $pheanstalk->release($job, PheanstalkInterface::DEFAULT_PRIORITY, static::DELAY_DURATION);
-            } elseif ($consumerEvent->getResult() === QueueConsumerResults::REJECT) {
+            } elseif ($consumerEvent->getResult() === MicroserviceConsumerResults::REJECT) {
                 $pheanstalk->bury($job);
             } else {
                 try {
@@ -106,5 +95,4 @@ class BeanstalkdSubscriber extends AbstractQueueSubscriber
             ++$messagesConsumed;
         }
     }
-
 }
