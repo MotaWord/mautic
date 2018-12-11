@@ -1,0 +1,14 @@
+{
+    "name": "MotaWord - Transactional Email Template",
+    "features": [
+        "email"
+    ],
+    "slots": {
+        "email": [
+            "header",
+            "body",
+            "primary-cta",
+            "footer"
+        ]
+    }
+}

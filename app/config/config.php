@@ -205,11 +205,13 @@ $container->setParameter('mautic.famework.csrf_protection', true);
 //Doctrine Configuration
 $dbalSettings = [
     'driver'   => '%mautic.db_driver%',
-    'host'     => '%mautic.db_host%',
+
+    'host'     => getenv('MAUTIC_DB_HOST') ?: '%mautic.db_host%',
     'port'     => '%mautic.db_port%',
-    'dbname'   => '%mautic.db_name%',
-    'user'     => '%mautic.db_user%',
-    'password' => '%mautic.db_password%',
+    'dbname'   => getenv('MAUTIC_DB_NAME') ?: '%mautic.db_name%',
+    'user'     => getenv('MAUTIC_DB_USER') ?: '%mautic.db_user%',
+    'password' => getenv('MAUTIC_DB_PASSWORD') ?: '%mautic.db_password%',
+
     'charset'  => 'UTF8',
     'types'    => [
         'array'    => 'Mautic\CoreBundle\Doctrine\Type\ArrayType',

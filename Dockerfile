@@ -1,7 +1,7 @@
 FROM php:7.1-apache
 
 LABEL vendor="Mautic"
-LABEL maintainer="MotaWord <it@motaword.com>"
+LABEL maintainer="MotaWor`d <it@motaword.com>"
 
 # Install PHP extensions
 RUN apt-get update && apt-get install --no-install-recommends -y \
@@ -23,9 +23,8 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN apt-get install $PHPIZE_DEPS
 RUN docker-php-ext-configure imap --with-imap --with-imap-ssl --with-kerberos
 RUN pecl install xdebug
-RUN docker-php-ext-install imap intl mbstring mcrypt mysqli pdo_mysql zip opcache
-RUN docker-php-ext-enable imap intl mbstring mcrypt mysqli pdo_mysql zip opcache
-
+RUN docker-php-ext-install imap intl bcmath mbstring mcrypt mysqli pdo_mysql sockets zip opcache
+RUN docker-php-ext-enable imap intl bcmath mbstring mcrypt mysqli pdo_mysql sockets zip opcache
 
 # Install composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin --filename=composer
@@ -33,20 +32,19 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin -
 # By default enable cron jobs
 ENV MAUTIC_RUN_CRON_JOBS true
 
-# Setting an root user for test
-ENV MAUTIC_DB_HOST database
-ENV MAUTIC_DB_USER mautic
-ENV MAUTIC_DB_NAME mautic
-
-RUN mkdir /var/log/mautic && chmod 777 /var/log/mautic
-
 # Copy init scripts and custom .htaccess
 COPY docker/docker-entrypoint.sh /entrypoint.sh
 COPY docker/makedb.php /makedb.php
 COPY docker/mautic.crontab /etc/cron.d/mautic
 COPY docker/mautic-php.ini /usr/local/etc/php/conf.d/mautic-php.ini
 COPY docker/init.sql /init.sql
-#ADD . /var/www/html
+ADD . /var/www/html
+RUN cd /var/www/html && composer install
+
+RUN mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
+    chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp && \
+    chown -R www-data:www-data /var/www/html/app/cache && chown -R www-data:www-data /var/www/html/app/logs && \
+    chown -R www-data:www-data /var/www/html/media
 
 # Enable Apache Rewrite Module
 RUN a2enmod rewrite
