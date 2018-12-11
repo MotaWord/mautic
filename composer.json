@@ -15,7 +15,7 @@
         ]
     },
     "require": {
-        "php": ">=7.1 <7.2",
+        "php": ">=7.1 <7.3",
 
         "symfony/console": "~2.8",
         "symfony/debug": "~2.8",
