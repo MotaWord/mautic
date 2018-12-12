@@ -42,8 +42,13 @@ class UserUpdateListener extends CommonSubscriber
      * @param EmailModel      $emailModel
      * @param LoggerInterface $logger
      */
-    public function __construct(MauticFactory $factory, IpLookupHelper $ipLookupHelper, AuditLogModel $auditLogModel, EmailModel $emailModel, LoggerInterface $logger)
-    {
+    public function __construct(
+        MauticFactory $factory,
+        IpLookupHelper $ipLookupHelper,
+        AuditLogModel $auditLogModel,
+        EmailModel $emailModel,
+        LoggerInterface $logger
+    ) {
         $this->factory        = $factory;
         $this->ipLookupHelper = $ipLookupHelper;
         $this->auditLogModel  = $auditLogModel;
@@ -54,7 +59,7 @@ class UserUpdateListener extends CommonSubscriber
     public static function getSubscribedEvents()
     {
         return [
-            MicroserviceEvents::START_CAMPAIGN => ['runEvent', 0],
+            MicroserviceEvents::USER_UPDATE => ['runEvent', 0],
         ];
     }
 

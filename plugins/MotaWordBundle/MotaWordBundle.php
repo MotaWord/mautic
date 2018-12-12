@@ -19,8 +19,12 @@ class MotaWordBundle extends PluginBundleBase
      * @param null          $metadata
      * @param null          $installedSchema
      */
-    public static function onPluginInstall(Plugin $plugin, MauticFactory $factory, $metadata = null, $installedSchema = null)
-    {
+    public static function onPluginInstall(
+        Plugin $plugin,
+        MauticFactory $factory,
+        $metadata = null,
+        $installedSchema = null
+    ) {
         try {
             /** @var FieldModel $model */
             $model = $factory->getModel('lead.field');
