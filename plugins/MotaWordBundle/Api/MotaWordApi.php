@@ -50,29 +50,38 @@ class MotaWordApi
 
         $body = json_decode($response->getBody(), true);
 
-        return $this->buildLead($body['email_address'], $mw_id);
+        return $this->buildLead($body['firstname'], $body['lastname'], $body['email'], $mw_id, $body['locale'],
+            $body['timezone']);
     }
 
     /**
+     * @param $firstname
+     * @param $lastname
      * @param $email
      * @param $mw_id
+     * @param $locale
+     * @param $timezone
      *
      * @return Lead
      */
-    private function buildLead($email, $mw_id)
+    private function buildLead($firstname, $lastname, $email, $mw_id, $locale, $timezone)
     {
         $lead = new Lead();
+        $lead->setFirstname($firstname);
+        $lead->setLastname($lastname);
         $lead->setEmail($email);
+        $lead->setTimezone($timezone); //todo name surname
         $lead->setFields(
             [
                 'core' => [
-                    'mw_id' => [//'id' = '', //TODO check is it necessary or not?
+                    'mw_id' => [
                         'label' => 'Motaword ID',
                         'alias' => 'mw_id',
                         'type'  => 'number',
                         'group' => 'core',
                         'value' => $mw_id,
                     ],
+                    'preferred_locale' => $locale,
                 ],
             ]
         );
