@@ -86,7 +86,10 @@ class SendEmailListener extends CommonSubscriber
                 }
             }
 
-            if ($sendTo && $this->emailModel->sendEmail($this->emailModel->getEntity($payload['email']), $sendTo)) {
+            //TODO check
+            $options['tokens'] = $payload;
+
+            if ($sendTo && $this->emailModel->sendEmail($this->emailModel->getEntity($payload['email']), $sendTo, $options)) {
                 $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
             } else {
                 $event->setResult(MicroserviceConsumerResults::REJECT);
