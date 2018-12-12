@@ -34,24 +34,25 @@ $container->loadFromExtension('monolog', [
         'main' => [
             'formatter'    => $debugMode ? 'mautic.monolog.fulltrace.formatter' : null,
             'type'         => 'fingers_crossed',
+            'path'         => 'php://stdout',
             'buffer_size'  => '200',
-            'action_level' => ($debugMode) ? 'debug' : 'error',
+            'action_level' => ($debugMode) ? 'debug' : 'info',
             'handler'      => 'nested',
             'channels'     => [
                 '!mautic',
             ],
         ],
         'nested' => [
-            'type'      => 'rotating_file',
-            'path'      => '%kernel.logs_dir%/%kernel.environment%.php',
-            'level'     => ($debugMode) ? 'debug' : 'error',
+            'type'      => 'console',
+            'path'      => 'php://stdout', // '%kernel.logs_dir%/%kernel.environment%.php',
+            'level'     => ($debugMode) ? 'debug' : 'info',
             'max_files' => 7,
         ],
         'mautic' => [
             'formatter' => $debugMode ? 'mautic.monolog.fulltrace.formatter' : null,
-            'type'      => 'rotating_file',
-            'path'      => '%kernel.logs_dir%/mautic_%kernel.environment%.php',
-            'level'     => ($debugMode) ? 'debug' : 'notice',
+            'type'      => 'console',
+            'path'      => 'php://stdout', //'%kernel.logs_dir%/mautic_%kernel.environment%.php',
+            'level'     => ($debugMode) ? 'debug' : 'info',
             'channels'  => [
                 'mautic',
             ],

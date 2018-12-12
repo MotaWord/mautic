@@ -38,8 +38,8 @@ $container->loadFromExtension('monolog', [
     'handlers' => [
         'main' => [
             'formatter' => 'mautic.monolog.fulltrace.formatter',
-            'type'      => 'rotating_file',
-            'path'      => '%kernel.logs_dir%/%kernel.environment%.php',
+            'type'      => 'stream',
+            'path'      => 'php://stdout', // '%kernel.logs_dir%/%kernel.environment%.php',
             'level'     => 'debug',
             'channels'  => [
                 '!mautic',
@@ -48,12 +48,13 @@ $container->loadFromExtension('monolog', [
         ],
         'console' => [
             'type'   => 'console',
+            'path'   => 'php://stdout',
             'bubble' => false,
         ],
         'mautic' => [
             'formatter' => 'mautic.monolog.fulltrace.formatter',
-            'type'      => 'rotating_file',
-            'path'      => '%kernel.logs_dir%/mautic_%kernel.environment%.php',
+            'type'      => 'stream',
+            'path'      => 'php://stdout', // '%kernel.logs_dir%/mautic_%kernel.environment%.php',
             'level'     => 'debug',
             'channels'  => [
                 'mautic',
