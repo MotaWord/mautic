@@ -5,6 +5,7 @@
 .php_cs.cache
 /.env
 /composer.phar
+supervisord.log
 
 /app/bootstrap*
 /app/tests.bootstrap*

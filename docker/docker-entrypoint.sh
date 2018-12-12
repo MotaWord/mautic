@@ -73,6 +73,9 @@ if [ -n "$MAUTIC_CRON_DYNAMICS" ]; then
         echo "10,40 * * * *     www-data   php /var/www/html/app/console mautic:integration:fetchleads -i Dynamics > /var/log/cron.pipe 2>&1" >> /etc/cron.d/mautic
 fi
 
+# Clear the cache
+composer run post-install-cmd && chown -R www-data:www-data /var/www/html/app/cache && chmod 777 -R /var/www/html/app/cache
+
 if ! [ -e index.php -a -e app/AppKernel.php ]; then
         echo >&2 "Mautic not found in $(pwd) - copying now..."
 
@@ -132,9 +135,6 @@ mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/m
     chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp && \
     chown -R www-data:www-data /var/www/html/app/cache && chown -R www-data:www-data /var/www/html/app/logs && \
     chown -R www-data:www-data /var/www/html/media && chmod 777 -R /var/www/html/app/cache
-
-# Clear the cache
-composer run post-install-cmd && chown -R www-data:www-data /var/www/html/app/cache && chmod 777 -R /var/www/html/app/cache
 
 # wait until all processes end (wait returns 0 retcode)
 while :; do
