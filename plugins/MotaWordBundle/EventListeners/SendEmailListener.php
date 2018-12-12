@@ -1,14 +1,5 @@
 <?php
 
-/*
- * @copyright   2014 Mautic Contributors. All rights reserved
- * @author      Mautic
- *
- * @link        http://mautic.org
- *
- * @license     GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
- */
-
 namespace MauticPlugin\MotaWordBundle\EventListeners;
 
 use Mautic\CoreBundle\EventListener\CommonSubscriber;
@@ -25,11 +16,9 @@ use MauticPlugin\MotaWordBundle\Api\MotaWordApi;
 use MauticPlugin\MotaWordBundle\MicroserviceEvents;
 use Psr\Log\LoggerInterface;
 
-/**
- * Class EmailSubscriber.
- */
-class EmailSubscriber extends CommonSubscriber
+class SendEmailListener extends CommonSubscriber
 {
+
     /**
      * @var AuditLogModel
      */
@@ -68,17 +57,15 @@ class EmailSubscriber extends CommonSubscriber
         $this->logger         = $logger;
     }
 
-    /**
-     * @return array
-     */
+
     public static function getSubscribedEvents()
     {
         return [
-            MicroserviceEvents::SEND_EMAIL => ['onSend', 0],
+            MicroserviceEvents::SEND_EMAIL => ['runEvent', 0],
         ];
     }
 
-    public function onSend(MicroserviceConsumerEvent $event): MicroserviceConsumerEvent
+    public function runEvent(MicroserviceConsumerEvent $event): MicroserviceConsumerEvent
     {
         $payload = $event->getPayload();
         $this->logger->info('@onSend, payload: '.json_encode($payload));
@@ -139,4 +126,5 @@ class EmailSubscriber extends CommonSubscriber
 
         return $event;
     }
+
 }

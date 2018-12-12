@@ -11,8 +11,7 @@ $container->loadFromExtension(
                     'name'         => 'mautic-microservice',
                     'routing_keys' => [
                         'emails.#',
-                        // @todo listen to user updates to change name, locale, timezone etc.
-                        'users.#',
+                        'users.#', // @todo listen to user updates to change name, locale, timezone etc.
                     ],
                 ],
             ],
@@ -78,11 +77,30 @@ return [
 
     'services' => [
         'events' => [
-            // the key of this array can be anything, it's just a container reference for EmailSubscriber.
-            // not topic or anything.
-            'mautic.motaword.emails.subscriber' => [
-                'class'     => 'MauticPlugin\MotaWordBundle\EventListeners\EmailSubscriber',
+            'mautic.motaword.emails.send_listener' => [
+                'class'     => 'MauticPlugin\MotaWordBundle\EventListeners\SendEmailListener',
                 'arguments' => [
+                    'mautic.factory',
+                    'mautic.helper.ip_lookup',
+                    'mautic.core.model.auditlog',
+                    'mautic.email.model.email',
+                    'monolog.logger.mautic',
+                ],
+            ],
+            'mautic.motaword.emails.start_campaign_listener' => [
+                'class'     => 'MauticPlugin\MotaWordBundle\EventListeners\StartCampaignListener',
+                'arguments' => [
+                    'mautic.factory',
+                    'mautic.helper.ip_lookup',
+                    'mautic.core.model.auditlog',
+                    'mautic.email.model.email',
+                    'monolog.logger.mautic',
+                ],
+            ],
+            'mautic.motaword.users.user_update_listener' => [
+                'class'     => 'MauticPlugin\MotaWordBundle\EventListeners\UserUpdateListener',
+                'arguments' => [
+                    'mautic.factory',
                     'mautic.helper.ip_lookup',
                     'mautic.core.model.auditlog',
                     'mautic.email.model.email',
