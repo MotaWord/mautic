@@ -19,4 +19,6 @@ final class MicroserviceEvents
 {
     // "emails.send" is the routing key from RabbitMQ
     const SEND_EMAIL = 'mautic.microservice.emails.send';
+    // @todo
+    const START_CAMPAIGN = 'mautic.microservice.emails.start_campaign';
 }

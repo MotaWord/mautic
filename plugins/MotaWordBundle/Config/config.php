@@ -11,6 +11,8 @@ $container->loadFromExtension(
                     'name'         => 'mautic-microservice',
                     'routing_keys' => [
                         'emails.#',
+                        // @todo listen to user updates to change name, locale, timezone etc.
+                        'users.#',
                     ],
                 ],
             ],
