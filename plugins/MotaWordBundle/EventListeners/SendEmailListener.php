@@ -7,18 +7,14 @@ use Mautic\CoreBundle\Factory\MauticFactory;
 use Mautic\CoreBundle\Helper\IpLookupHelper;
 use Mautic\CoreBundle\Model\AuditLogModel;
 use Mautic\EmailBundle\Model\EmailModel;
-use Mautic\LeadBundle\Entity\Lead;
-use Mautic\LeadBundle\Entity\LeadRepository;
-use Mautic\LeadBundle\Model\LeadModel;
 use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceConsumerEvent;
 use MauticPlugin\MauticMicroserviceBundle\Queue\MicroserviceConsumerResults;
-use MauticPlugin\MotaWordBundle\Api\MotaWordApi;
+use MauticPlugin\MotaWordBundle\Controller\ContactController;
 use MauticPlugin\MotaWordBundle\MicroserviceEvents;
 use Psr\Log\LoggerInterface;
 
 class SendEmailListener extends CommonSubscriber
 {
-
     /**
      * @var AuditLogModel
      */
@@ -48,15 +44,19 @@ class SendEmailListener extends CommonSubscriber
      * @param EmailModel      $emailModel
      * @param LoggerInterface $logger
      */
-    public function __construct(MauticFactory $factory, IpLookupHelper $ipLookupHelper, AuditLogModel $auditLogModel, EmailModel $emailModel, LoggerInterface $logger)
-    {
+    public function __construct(
+        MauticFactory $factory,
+        IpLookupHelper $ipLookupHelper,
+        AuditLogModel $auditLogModel,
+        EmailModel $emailModel,
+        LoggerInterface $logger
+    ) {
         $this->factory        = $factory;
         $this->ipLookupHelper = $ipLookupHelper;
         $this->auditLogModel  = $auditLogModel;
         $this->emailModel     = $emailModel;
         $this->logger         = $logger;
     }
-
 
     public static function getSubscribedEvents()
     {
@@ -67,64 +67,66 @@ class SendEmailListener extends CommonSubscriber
 
     public function runEvent(MicroserviceConsumerEvent $event): MicroserviceConsumerEvent
     {
-        $payload = $event->getPayload();
-        $this->logger->info('@onSend, payload: '.json_encode($payload));
-        if (!isset($payload['name'])) {
-            $this->logger->warning('Payload missing email name. Skipping.');
+        try {
+            $payload    = $event->getPayload();
+            $validation = $this->validatePayload($payload);
+            if ($validation['isValid'] === false) {
+                $this->logger->error($validation['message']);
+                $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
 
-            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
+                return $event;
+            }
 
-            return $event;
-        }
+            $contactService = new ContactController($this->factory);
+            $sendTo         = [];
+            foreach ($payload['user_id_list'] as $mwId) {
+                $contactId = $contactService->getContactId($mwId);
+                if ($contactId != 0) {
+                    $sendTo[] = $contactId;
+                }
+            }
 
-        // @todo get the email name from payload and find the Email entity
-        $email = $this->emailModel->getEntity($payload['name']);
-
-        //@todo also support regular email addresses apart from user_ids.
-        if (!isset($payload['user_id_list']) || !$payload['user_id_list']) {
-            $this->logger->warning('Payload missing recipient list. Skipping.');
-
-            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
-
-            return $event;
-        }
-
-        $mwUserIds = $payload['user_id_list'];
-        $sendTo    = [];
-
-        /** @var LeadModel $leadModel */
-        $leadModel = $this->factory->getModel('lead');
-
-        /** @var LeadRepository $repository */
-        $leadRepository = $leadModel->getRepository();
-        $motaword       = new MotaWordApi();
-
-        foreach ($mwUserIds as $mwUserId) {
-            /** @var Lead $lead */
-            $lead = $leadRepository->findOneBy(['mw_id' => $mwUserId]);
-
-            if ($lead === null) {
-                $this->logger->info('Could not find MW user as Mautic lead. Creating one.');
-                $leadModel->saveEntity($motaword->getUser($mwUserId));
-
-                /** @var Lead $createdLead */
-                $createdLead = $leadRepository->findOneBy(['mw_id' => $mwUserId]);
-
-                $sendTo[] = $createdLead->getId();
+            if ($sendTo && $this->emailModel->sendEmail($this->emailModel->getEntity($payload['email']), $sendTo)) {
+                $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
             } else {
-                $sendTo[] = $lead->getId();
+                $event->setResult(MicroserviceConsumerResults::REJECT);
+            }
+
+            return $event;
+        } catch (\Exception $ex) {
+            $this->logger->error(MicroserviceEvents::SEND_EMAIL.' event has an exception. Error message : '.$ex->getMessage());
+            //TODO Bugsnag!
+        }
+    }
+
+    /**
+     * @param array $payload
+     *
+     * @return array
+     */
+    public function validatePayload($payload): array
+    {
+        $message = null;
+        $isValid = true;
+
+        if (!isset($payload['email'])) {
+            $message = 'Payload missing email name. Skipping.';
+            $isValid = false;
+        } else {
+            if ($this->emailModel->getEntity($payload['email']) === null) {
+                $message = 'The email template is not exist in mautic.';
+                $isValid = false;
+            } else {
+                if (!isset($payload['user_id_list']) || !$payload['user_id_list']) {
+                    $message = 'Payload missing recipient list. Skipping.';
+                    $isValid = false;
+                }
             }
         }
 
-        if ($sendTo && $this->emailModel->sendEmail($email, $sendTo)) {
-            $event->setResult(MicroserviceConsumerResults::ACKNOWLEDGE);
-
-            return $event;
-        }
-
-        $event->setResult(MicroserviceConsumerResults::REJECT);
-
-        return $event;
+        return [
+            'message' => $message,
+            'isValid' => $isValid,
+        ];
     }
-
 }
