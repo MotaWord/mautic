@@ -50,7 +50,7 @@ class MotaWordApi
 
         $body = json_decode($response->getBody(), true);
 
-        return $this->buildLead($body['firstname'], $body['lastname'], $body['email_address'], $mw_id, $body['locale'],
+        return $this->buildLead($body['firstname'], $body['lastname'], $body['email'], $mw_id, $body['locale'],
             $body['timezone']);
     }
 
