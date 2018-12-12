@@ -64,7 +64,7 @@ class MotaWordBundle extends PluginBundleBase
         $field->setAlias('mw_id');
         $field->setType('number');
         $field->setGroup('core');
-        $field->setIsRequired(true);
+        $field->setIsRequired(false);
         $field->setIsFixed(true);
         $field->setIsVisible(true);
         $field->setIsShortVisible(true);
