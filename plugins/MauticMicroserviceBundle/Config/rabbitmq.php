@@ -21,9 +21,10 @@ $container->loadFromExtension(
                 'password'           => '%mautic.rabbitmq_password%',
                 'vhost'              => '%mautic.rabbitmq_vhost%',
                 'lazy'               => true,
-                'connection_timeout' => 3,
-                'heartbeat'          => 2,
-                'read_write_timeout' => 4,
+                'connection_timeout' => 60,
+                'heartbeat'          => 30,
+                'read_write_timeout' => 60,
+                'keepalive'          => true,
             ],
         ],
         'consumers' => [
