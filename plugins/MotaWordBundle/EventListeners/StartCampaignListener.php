@@ -42,8 +42,13 @@ class StartCampaignListener extends CommonSubscriber
      * @param EmailModel      $emailModel
      * @param LoggerInterface $logger
      */
-    public function __construct(MauticFactory $factory, IpLookupHelper $ipLookupHelper, AuditLogModel $auditLogModel, EmailModel $emailModel, LoggerInterface $logger)
-    {
+    public function __construct(
+        MauticFactory $factory,
+        IpLookupHelper $ipLookupHelper,
+        AuditLogModel $auditLogModel,
+        EmailModel $emailModel,
+        LoggerInterface $logger
+    ) {
         $this->factory        = $factory;
         $this->ipLookupHelper = $ipLookupHelper;
         $this->auditLogModel  = $auditLogModel;
