@@ -10,6 +10,7 @@ use Mautic\EmailBundle\Model\EmailModel;
 use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceConsumerEvent;
 use MauticPlugin\MauticMicroserviceBundle\Queue\MicroserviceConsumerResults;
 use MauticPlugin\MotaWordBundle\Controller\ContactController;
+use MauticPlugin\MotaWordBundle\Controller\Logger;
 use MauticPlugin\MotaWordBundle\MicroserviceEvents;
 use Psr\Log\LoggerInterface;
 
@@ -97,8 +98,7 @@ class SendEmailListener extends CommonSubscriber
 
             return $event;
         } catch (\Exception $ex) {
-            $this->logger->error(MicroserviceEvents::SEND_EMAIL.' event has an exception. Error message : '.$ex->getMessage());
-            //TODO Bugsnag!
+            Logger::send($ex, MicroserviceEvents::SEND_EMAIL.' event has an exception. Error message : '.$ex->getMessage());
         }
     }
 

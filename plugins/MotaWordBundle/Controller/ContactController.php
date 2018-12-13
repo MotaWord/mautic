@@ -57,7 +57,8 @@ class ContactController
                 return $sendTo[] = $lead->getId();
             }
         } catch (\Exception $ex) {
-            //TODO Bugsnag error('getContactId has an exception with mw_id :  ' . $mwId . ' error message is : ' . $ex->getMessage());
+            Logger::send($ex, 'getContactId has an exception with mw_id : '.$mwId.'error : '.$ex->getMessage());
+
             return 0;
         }
     }
