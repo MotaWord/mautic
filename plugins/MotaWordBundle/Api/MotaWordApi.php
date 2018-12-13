@@ -7,11 +7,19 @@ use Mautic\LeadBundle\Entity\Lead;
 
 class MotaWordApi
 {
-    //TODO : following parameters should be env. parameters.
+    private $baseURL;
+    private $username;
+    private $password;
 
-    private $baseURL  = 'http://api';
-    private $username = '518725b5fcda3573';
-    private $password = '27e571d75a56b8053ffc69caf58213ba';
+    /**
+     * MotaWordApi constructor.
+     */
+    public function __construct()
+    {
+        $this->baseURL  = getenv('MOTAWORD_API_URL');
+        $this->username = getenv('MOTAWORD_API_USERNAME');
+        $this->password = getenv('MOTAWORD_API_PASSWORD');
+    }
 
     private function getAuthToken()
     {
