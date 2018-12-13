@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+    <url>http://znt.motaword.com/</url>
+
+    <project>mautic-test1</project>
+    <project-version>master</project-version>
+    <project-type>file</project-type>
+
+    <src-dir>app/cache/l10n/en</src-dir>
+    <trans-dir>app/cache/l10n</trans-dir>
+
+    <rules>
+        <rule pattern="**/*.html">{locale}/{path}/{filename}.html</rule>
+        <rule pattern="**/*.json">{locale}/{path}/{filename}.json</rule>
+    </rules>
+</config>
