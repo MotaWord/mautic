@@ -19,7 +19,7 @@ class Logger
     public static function getClient()
     {
         if (!static::$client) {
-            static::$client = Client::make(getenv('MOTAWORD_API_URL'));
+            static::$client = Client::make(getenv('BUGSNAG_KEY'));
             Handler::register(static::$client);
         }
 
