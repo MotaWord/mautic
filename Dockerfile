@@ -7,7 +7,8 @@ LABEL maintainer="MotaWord <it@motaword.com>"
 RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
 
 # Install PHP extensions
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done && \
+    apt-get update && apt-get install --no-install-recommends -y \
     cron \
     git \
     wget \
