@@ -54,6 +54,7 @@ class SyncService
         // Create temporary directories
         if (!file_exists(static::$baseDirectory)) {
             mkdir(static::$baseDirectory, 0777, true);
+            $this->logger->info('Created cache directory in '.static::$baseDirectory);
         }
     }
 

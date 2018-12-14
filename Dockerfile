@@ -52,9 +52,15 @@ COPY docker/init.sql /init.sql
 COPY docker/supervisord.conf /etc/supervisord.conf
 ADD . /var/www/html
 
-RUN mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
-    chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp && \
-    chown -R www-data:www-data /var/www/html/app/cache && chown -R www-data:www-data /var/www/html/app/logs && \
+RUN mkdir /var/log/mautic && \
+    chmod 777 -R /var/log/mautic && \
+    chmod o+t -R /var/log/mautic && \
+    chmod 777 -R /tmp && \
+    chmod o+t -R /tmp && \
+    chown -R www-data:www-data /tmp && \
+    mkdir -p /var/www/html/app/cache && \
+    chown -R www-data:www-data /var/www/html/app/cache && \
+    chown -R www-data:www-data /var/www/html/app/logs && \
     chown -R www-data:www-data /var/www/html/media
 
 # Enable Apache Rewrite Module
