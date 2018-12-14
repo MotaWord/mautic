@@ -4,7 +4,7 @@ LABEL vendor="Mautic"
 LABEL maintainer="MotaWord <it@motaword.com>"
 
 # Create manual files for software installations. openjdk is giving an error otherwise.
-RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
+RUN mkdir -p /usr/share/man/man1 && chmod 777 -R /usr/share/man/man1
 
 # Install PHP extensions
 RUN apt-get update && apt-get install --no-install-recommends -y \
