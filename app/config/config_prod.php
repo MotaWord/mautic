@@ -32,8 +32,8 @@ $container->loadFromExtension('monolog', [
     ],
     'handlers' => [
         'main' => [
-            'formatter'    => $debugMode ? 'mautic.monolog.fulltrace.formatter' : null,
-            'type'         => 'fingers_crossed',
+            'formatter'    => 'mautic.monolog.fulltrace.formatter',
+            'type'         => 'stream',
             'path'         => 'php://stdout',
             'buffer_size'  => '200',
             'action_level' => ($debugMode) ? 'debug' : 'info',
@@ -42,6 +42,11 @@ $container->loadFromExtension('monolog', [
                 '!mautic',
             ],
         ],
+        'console' => [
+            'type'   => 'console',
+            'path'   => 'php://stdout',
+            'bubble' => false,
+        ],
         'nested' => [
             'type'      => 'console',
             'path'      => 'php://stdout', // '%kernel.logs_dir%/%kernel.environment%.php',
@@ -49,8 +54,8 @@ $container->loadFromExtension('monolog', [
             'max_files' => 7,
         ],
         'mautic' => [
-            'formatter' => $debugMode ? 'mautic.monolog.fulltrace.formatter' : null,
-            'type'      => 'console',
+            'formatter' => 'mautic.monolog.fulltrace.formatter',
+            'type'      => 'stream',
             'path'      => 'php://stdout', //'%kernel.logs_dir%/mautic_%kernel.environment%.php',
             'level'     => ($debugMode) ? 'debug' : 'info',
             'channels'  => [

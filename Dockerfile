@@ -3,6 +3,9 @@ FROM php:7.1-apache
 LABEL vendor="Mautic"
 LABEL maintainer="MotaWord <it@motaword.com>"
 
+# Create manual files for software installations. openjdk is giving an error otherwise.
+RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
+
 # Install PHP extensions
 RUN apt-get update && apt-get install --no-install-recommends -y \
     cron \
@@ -17,6 +20,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     unzip \
     zip \
     supervisor \
+    openjdk-8-jre-headless \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/* \
     && rm /etc/cron.daily/*

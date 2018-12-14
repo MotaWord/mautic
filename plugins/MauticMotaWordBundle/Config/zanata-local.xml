@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://zanata.org/namespace/config/">
+    <url>http://znt.motaword.com/</url>
+
+    <project>mw-l10n</project>
+    <project-version>master</project-version>
+    <project-type>file</project-type>
+
+    <src-dir>.cache/en</src-dir>
+    <trans-dir>.cache</trans-dir>
+
+    <rules>
+        <rule pattern="**/*.html">{locale}/{path}/{filename}.html</rule>
+    </rules>
+</config>
