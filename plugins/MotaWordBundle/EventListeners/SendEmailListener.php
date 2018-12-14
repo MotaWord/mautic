@@ -80,7 +80,7 @@ class SendEmailListener extends CommonSubscriber
 
             $contactService = new ContactController($this->factory);
             $sendTo         = [];
-            foreach ($payload['user_id_list'] as $mwId) {
+            foreach ($payload['user_ids'] as $mwId) {
                 $contactId = $contactService->getContactId($mwId);
                 if ($contactId != 0) {
                     $sendTo[] = $contactId;
@@ -120,7 +120,15 @@ class SendEmailListener extends CommonSubscriber
                 $message = 'The email template is not exist in mautic.';
                 $isValid = false;
             } else {
-                if (!isset($payload['user_id_list']) || !$payload['user_id_list']) {
+                // If user_id is set but not user_ids, set user_ids as an array from user_id
+                // user_ids is what we want to handle outside in normal flow
+                if (isset($payload['user_id']) && $payload['user_id']) {
+                    if (!isset($payload['user_ids']) || !$payload['user_ids']) {
+                        $payload['user_ids'] = [$payload['user_id']];
+                    }
+                }
+
+                if (!isset($payload['user_id']) || !$payload['user_id']) {
                     $message = 'Payload missing recipient list. Skipping.';
                     $isValid = false;
                 }

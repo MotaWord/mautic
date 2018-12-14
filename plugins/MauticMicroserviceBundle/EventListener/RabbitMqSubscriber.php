@@ -48,7 +48,6 @@ class RabbitMqSubscriber extends AbstractQueueSubscriber
      */
     public function consumeMessage(Events\MicroserviceEvent $event)
     {
-        $this->logger->info('@consumeMessage');
         $consumer = $this->container->get('old_sound_rabbit_mq.microservice_consumer');
         $this->logger->info('Listening for topic '.$event->getQueueName());
         $consumer->consume($event->getMessages());
