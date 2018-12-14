@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.1-apache-jessie
 
 LABEL vendor="Mautic"
 LABEL maintainer="MotaWord <it@motaword.com>"
@@ -6,9 +6,12 @@ LABEL maintainer="MotaWord <it@motaword.com>"
 # Create manual files for software installations. openjdk is giving an error otherwise.
 RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done
 
-# Install PHP extensions
-RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done && \
-    apt-get update && apt-get install --no-install-recommends -y \
+# Install Java 8 for zanata-cli tool in MauticMotaWordBundle
+RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list
+RUN apt-get -y update && apt-get install --no-install-recommends -y -t jessie-backports ca-certificates-java && apt-get -y --no-install-recommends install openjdk-8-jdk && update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+
+# Install PHP extensions and helper software
+RUN apt-get update && apt-get install --no-install-recommends -y \
     cron \
     git \
     wget \
@@ -21,7 +24,6 @@ RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i"; done && \
     unzip \
     zip \
     supervisor \
-    openjdk-8-jre-headless \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/* \
     && rm /etc/cron.daily/*
