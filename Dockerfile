@@ -4,7 +4,7 @@ LABEL vendor="Mautic"
 LABEL maintainer="MotaWord <it@motaword.com>"
 
 # Create manual files for software installations. openjdk is giving an error otherwise.
-RUN mkdir -p /usr/share/man/man1 && chmod 777 -R /usr/share/man/man1
+RUN for i in {1..8}; do mkdir -p "/usr/share/man/man$i" && chmod 777 -R "/usr/share/man/man$i"; done
 
 # Install Java 8 for zanata-cli tool in MauticMotaWordBundle
 RUN echo deb http://http.debian.net/debian jessie-backports main >> /etc/apt/sources.list
