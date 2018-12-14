@@ -2,7 +2,7 @@
 <config xmlns="http://zanata.org/namespace/config/">
     <url>http://znt.motaword.com/</url>
 
-    <project>mautic-test1</project>
+    <project>mw-l10n</project>
     <project-version>master</project-version>
     <project-type>file</project-type>
 
@@ -13,4 +13,7 @@
         <rule pattern="**/*.html">{locale}/{path}/{filename}.html</rule>
         <rule pattern="**/*.json">{locale}/{path}/{filename}.json</rule>
     </rules>
+
+    <includes>**/*.html,**/*.json</includes>
+    <excludes>**/*.po,**/*.pot,**/*.md</excludes>
 </config>

@@ -12,6 +12,7 @@
 namespace MauticPlugin\MauticMotaWordBundle\Command;
 
 use MauticPlugin\MauticMotaWordBundle\SyncService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -19,6 +20,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class SyncLocalizationCommand extends ContainerAwareCommand
 {
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
     /**
      * {@inheritdoc}
      */
@@ -42,6 +48,7 @@ class SyncLocalizationCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container    = $this->getContainer();
+        $this->logger = $container->get('monolog.logger.mautic');
         /** @var SyncService $service */
         $service = $container->get('mautic.motaword.syncservice');
 
@@ -72,8 +79,10 @@ class SyncLocalizationCommand extends ContainerAwareCommand
             '--push-type source '.
             '--file-types "HTML,JSON"';
 
+        $this->logger->debug($cmd);
+
         exec($cmd, $output, $code);
-        print_r($output);
+        $this->logger->info(implode(PHP_EOL, $output));
 
         if ($code > 0) {
             throw new \Error(print_r($output, true));
@@ -95,8 +104,10 @@ class SyncLocalizationCommand extends ContainerAwareCommand
             '--pull-type trans '.
             '--min-doc-percent 1';
 
+        $this->logger->debug($cmd);
+
         exec($cmd, $output, $code);
-        print_r($output);
+        $this->logger->info(implode(PHP_EOL, $output));
 
         if ($code > 0) {
             throw new \Error(print_r($output, true));
