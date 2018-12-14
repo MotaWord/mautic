@@ -84,6 +84,7 @@ return [
                     'mautic.helper.ip_lookup',
                     'mautic.core.model.auditlog',
                     'mautic.email.model.email',
+                    'mautic.lead.model.lead',
                     'monolog.logger.mautic',
                 ],
             ],

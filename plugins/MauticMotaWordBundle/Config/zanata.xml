@@ -6,6 +6,11 @@
     <project-version>master</project-version>
     <project-type>file</project-type>
 
+    <!--
+    I couldn't get rid of this "html" part during cron runs.
+    It runs perfectly without it with MauticMotaWordBundle's `sync` command.
+        - Oytun
+    -->
     <src-dir>app/cache/l10n/en</src-dir>
     <trans-dir>app/cache/l10n</trans-dir>
 

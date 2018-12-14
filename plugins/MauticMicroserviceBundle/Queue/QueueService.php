@@ -18,7 +18,6 @@ namespace MauticPlugin\MauticMicroserviceBundle\Queue;
 use Mautic\CoreBundle\Helper\CoreParametersHelper;
 use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceConsumerEvent;
 use MauticPlugin\MauticMicroserviceBundle\Event\MicroserviceEvent;
-use MauticPlugin\MauticMicroserviceBundle\Helper\QueueRequestHelper;
 use MauticPlugin\MauticMicroserviceBundle\MicroserviceEvents;
 use PhpAmqpLib\Message\AMQPMessage;
 use Psr\Log\LoggerInterface;
@@ -84,10 +83,6 @@ class QueueService
         }
         $logPayload = $payload;
         unset($logPayload['request']);
-
-        if (isset($payload['request'])) {
-            $payload['request'] = QueueRequestHelper::buildRequest($payload['request']);
-        }
 
         // This is the event name released to the system.
         // microservice bundle users should their own events and bind them

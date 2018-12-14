@@ -4,6 +4,7 @@ namespace MauticPlugin\MotaWordBundle\Api;
 
 use GuzzleHttp\Client;
 use Mautic\LeadBundle\Entity\Lead;
+use Psr\Log\LoggerInterface;
 
 class MotaWordApi
 {
@@ -12,13 +13,19 @@ class MotaWordApi
     private $password;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * MotaWordApi constructor.
      */
-    public function __construct()
+    public function __construct(LoggerInterface $logger)
     {
         $this->baseURL  = getenv('MOTAWORD_API_URL');
         $this->username = getenv('MOTAWORD_API_USERNAME');
         $this->password = getenv('MOTAWORD_API_PASSWORD');
+        $this->logger   = $logger;
     }
 
     private function getAuthToken()
@@ -30,9 +37,7 @@ class MotaWordApi
 
         $response = $client->post('token', [
             'headers'     => ['Authorization' => 'Basic '.$credentials],
-            'form_params' => [
-                'grant_type' => 'client_credentials',
-            ],
+            'form_params' => ['grant_type' => 'client_credentials'],
         ]);
 
         $body = json_decode($response->getBody(), true);
@@ -45,26 +50,31 @@ class MotaWordApi
      *
      * @return Lead
      */
-    public function getUser($mw_id)
+    public function getUserAsLead($mw_id)
     {
         //refactor this with singleton
         $token = $this->getAuthToken();
 
-        $client = new Client([
-            'base_uri' => $this->baseURL,
-        ]);
+        $client = new Client(['base_uri' => $this->baseURL]);
 
         $response = $client->get('users/'.$mw_id.'?access_token='.$token);
+        $body     = json_decode($response->getBody(), true);
 
-        $body = json_decode($response->getBody(), true);
+        $this->logger->debug('MW user API call response: '.json_encode($body));
 
-        return $this->buildLead($body['firstname'], $body['lastname'], $body['email'], $mw_id, $body['locale'],
-            $body['timezone']);
+        return $this->buildLead(
+            $body['firstname'],
+            $body['lastname'],
+            $body['email'],
+            $mw_id,
+            $body['locale'],
+            $body['timezone']
+        );
     }
 
     /**
-     * @param $firstname
-     * @param $lastname
+     * @param $firstName
+     * @param $lastName
      * @param $email
      * @param $mw_id
      * @param $locale
@@ -72,27 +82,18 @@ class MotaWordApi
      *
      * @return Lead
      */
-    private function buildLead($firstname, $lastname, $email, $mw_id, $locale, $timezone)
+    private function buildLead($firstName, $lastName, $email, $mw_id, $locale, $timezone)
     {
         $lead = new Lead();
-        $lead->setFirstname($firstname);
-        $lead->setLastname($lastname);
+        $lead->setFirstname($firstName);
+        $lead->setLastname($lastName);
         $lead->setEmail($email);
-        $lead->setTimezone($timezone); //todo name surname
-        $lead->setFields(
-            [
-                'core' => [
-                    'mw_id' => [
-                        'label' => 'Motaword ID',
-                        'alias' => 'mw_id',
-                        'type'  => 'number',
-                        'group' => 'core',
-                        'value' => $mw_id,
-                    ],
-                    'preferred_locale' => $locale,
-                ],
-            ]
-        );
+
+        // @todo this timezone may not be compatible with Mautic's timezone
+        $lead->setTimezone($timezone);
+
+        $lead->addUpdatedField('preferred_locale', $locale);
+        $lead->addUpdatedField('mw_id', $mw_id);
 
         return $lead;
     }
