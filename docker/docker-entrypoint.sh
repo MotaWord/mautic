@@ -96,12 +96,14 @@ echo >&2 "======================================================================
 echo >&2
 echo >&2 "This server is now configured to run Mautic!"
 
+# Symfony is not the easiest to use env vars as configuration.
+# This one moves env vars to parameters.
+php /makeconfig.php
+
 # Make sure our web user owns the config file if it exists
 chown www-data:www-data app/config/local.php
 mkdir -p /var/www/html/app/logs
 chown www-data:www-data /var/www/html/app/logs
-
-composer run post-install-cmd && chown -R www-data:www-data /var/www/html/app/cache && chmod 777 -R /var/www/html/app/cache
 
 if [[ "$MAUTIC_RUN_CRON_JOBS" == "true" ]]; then
     if [ ! -e /var/log/cron.pipe ]; then

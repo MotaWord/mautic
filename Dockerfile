@@ -44,13 +44,13 @@ ENV MAUTIC_RUN_CRON_JOBS true
 
 # Copy init scripts and custom .htaccess
 COPY docker/docker-entrypoint.sh /entrypoint.sh
+COPY docker/makeconfig.php /makeconfig.php
 COPY docker/makedb.php /makedb.php
 COPY docker/mautic.crontab /etc/cron.d/mautic
 COPY docker/mautic-php.ini /usr/local/etc/php/conf.d/mautic-php.ini
 COPY docker/init.sql /init.sql
 COPY docker/supervisord.conf /etc/supervisord.conf
 ADD . /var/www/html
-RUN cd /var/www/html && composer install && rm -rf /root/.composer
 
 RUN mkdir /var/log/mautic && chmod 777 -R /var/log/mautic && chmod o+t -R /var/log/mautic && \
     chmod 777 -R /tmp && chmod o+t -R /tmp && chown -R www-data:www-data /tmp && \
