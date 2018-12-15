@@ -684,6 +684,19 @@ class ConfigType extends AbstractType
             ]
         );
         $builder->add(
+            'email_frequency_unit',
+            'number',
+            [
+                'precision'  => 0,
+                'label'      => 'mautic.lead.list.frequency.unit',
+                'label_attr' => ['class' => 'control-label'],
+                'required'   => false,
+                'attr'       => [
+                    'class' => 'form-control frequency',
+                ],
+            ]
+        );
+        $builder->add(
             'email_frequency_time',
             'choice',
             [

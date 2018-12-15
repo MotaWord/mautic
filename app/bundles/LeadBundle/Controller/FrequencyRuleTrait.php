@@ -132,6 +132,7 @@ trait FrequencyRuleTrait
             if (isset($frequencyRules[$channel])) {
                 $frequencyRule                      = $frequencyRules[$channel];
                 $data['frequency_number_'.$channel] = $frequencyRule['frequency_number'];
+                $data['frequency_unit_'.$channel]   = $frequencyRule['frequency_unit'];
                 $data['frequency_time_'.$channel]   = $frequencyRule['frequency_time'];
                 if ($frequencyRule['pause_from_date']) {
                     $data['contact_pause_start_date_'.$channel] = new \DateTime($frequencyRule['pause_from_date']);

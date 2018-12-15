@@ -106,6 +106,23 @@ class ContactFrequencyType extends AbstractType
                     );
 
                     $builder->add(
+                        'frequency_unit_'.$channel,
+                        'integer',
+                        [
+                            'precision'  => 0,
+                            'label'      => 'mautic.lead.list.frequency.times',
+                            'label_attr' => ['class' => 'text-muted frequency-label label1'],
+                            'attr'       => array_merge(
+                                $attr,
+                                [
+                                    'class' => 'frequency form-control',
+                                ]
+                            ),
+                            'required' => false,
+                        ]
+                    );
+
+                    $builder->add(
                         'frequency_time_'.$channel,
                         'choice',
                         [

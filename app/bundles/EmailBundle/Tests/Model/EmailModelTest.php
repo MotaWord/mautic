@@ -990,7 +990,7 @@ class EmailModelTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $frequencyRepository->method('getAppliedFrequencyRules')
-            ->will($this->returnValue([['lead_id' => 1, 'frequency_number' => 1, 'frequency_time' => 'DAY']]));
+            ->will($this->returnValue([['lead_id' => 1, 'frequency_number' => 1, 'frequency_time' => 'DAY', 'frequency_unit' => 1]]));
         $messageRepository = $this->getMockBuilder(MessageRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
