@@ -110,9 +110,10 @@ class ContactFrequencyType extends AbstractType
                         'choice',
                         [
                             'choices' => [
-                                FrequencyRule::TIME_DAY   => 'mautic.core.time.days',
-                                FrequencyRule::TIME_WEEK  => 'mautic.core.time.weeks',
-                                FrequencyRule::TIME_MONTH => 'mautic.core.time.months',
+                                FrequencyRule::TIME_MINUTE   => 'mautic.core.time.minutes',
+                                FrequencyRule::TIME_DAY      => 'mautic.core.time.days',
+                                FrequencyRule::TIME_WEEK     => 'mautic.core.time.weeks',
+                                FrequencyRule::TIME_MONTH    => 'mautic.core.time.months',
                             ],
                             'label'      => 'mautic.lead.list.frequency.times',
                             'label_attr' => ['class' => 'text-muted fw-n frequency-label label2'],

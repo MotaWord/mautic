@@ -673,6 +673,7 @@ return [
                     'mautic.email.model.send_email_to_contacts',
                     'mautic.tracker.device',
                     'mautic.page.repository.redirect',
+                    'mautic.helper.core_parameters',
                 ],
             ],
             'mautic.email.model.send_email_to_user' => [
@@ -793,6 +794,7 @@ return [
         'default_signature_text'              => null,
         'email_frequency_number'              => null,
         'email_frequency_time'                => null,
+        'enforce_frequency_check'             => false,
         'show_contact_preferences'            => false,
         'show_contact_frequency'              => false,
         'show_contact_pause_dates'            => false,
