@@ -701,9 +701,10 @@ class ConfigType extends AbstractType
             'choice',
             [
                 'choices'    => [
-                    'DAY'   => 'day',
-                    'WEEK'  => 'week',
-                    'MONTH' => 'month',
+                    'MINUTE' => 'minute',
+                    'DAY'    => 'day',
+                    'WEEK'   => 'week',
+                    'MONTH'  => 'month',
                 ],
                 'label'      => 'mautic.lead.list.frequency.times',
                 'label_attr' => ['class' => 'control-label'],
