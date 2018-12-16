@@ -196,7 +196,7 @@ $parameters = [
   ],
   'mailer_is_owner'                       => 0,
   'default_signature_text'                => 'Best regards, |FROM_NAME|',
-  'email_frequency_number'                => null,
+  'email_frequency_number'                => 5,
   'email_frequency_time'                  => 'MINUTE',
   'email_frequency_unit'                  => 3,
   'enforce_frequency_check'               => true,

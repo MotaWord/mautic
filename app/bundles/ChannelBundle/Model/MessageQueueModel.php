@@ -100,7 +100,8 @@ class MessageQueueModel extends FormModel
         $frequencyRulesRepo     = $this->em->getRepository('MauticLeadBundle:FrequencyRule');
         $defaultFrequencyNumber = $this->coreParametersHelper->getParameter($channel.'_frequency_number');
         $defaultFrequencyTime   = $this->coreParametersHelper->getParameter($channel.'_frequency_time');
-        $defaultFrequencyUnit   = $this->coreParametersHelper->getParameter($channel.'_frequency_unit');
+        // Default frequency unit is 1, to keep it backward compatible, both on DB and technical code.
+        $defaultFrequencyUnit   = $this->coreParametersHelper->getParameter($channel.'_frequency_unit', 1);
 
         $dontSendTo = $frequencyRulesRepo->getAppliedFrequencyRules(
             $channel,
